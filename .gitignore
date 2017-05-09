@@ -8,3 +8,5 @@ webhooks.js
 logs
 run.js
 build
+.idea
+dist/

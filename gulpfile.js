@@ -1,12 +1,14 @@
 'use strict';
 
 var gulp = require('gulp');
+var browserSync = require('browser-sync').create();
 var sass = require('gulp-sass');
 var mainBowerFiles = require('main-bower-files');
 var minifyCss = require('gulp-minify-css');
 var sourcemaps = require('gulp-sourcemaps');
 var ghPages = require('gulp-gh-pages');
 var del = require('del');
+var rename = require('gulp-rename');
 
 // Bower assets
 gulp.task('bower', function moveBowerDeps() {
@@ -42,9 +44,10 @@ gulp.task('cssimg', ['bootstrap:customize'], function() {
 });
 
 gulp.task('sass', ['bootstrap:customize'], function() {
-  return gulp.src('build/lib/bootstrap-sass/assets/stylesheets/ita-bootstrap.scss')
-	.pipe(sass.sync({precision:8}).on('error', sass.logError))
-	.pipe(minifyCss({compatibility: 'ie8'}))
+  return gulp.src('build/lib/bootstrap-sass/assets/stylesheets/agid.scss')
+  .pipe(sass().on('error', sass.logError))
+  .pipe(minifyCss({compatibility: 'ie8'}))
+    .pipe(rename('ita-bootstrap.css'))
     .pipe(gulp.dest('dist/css'));
 });
 
@@ -63,10 +66,25 @@ gulp.task('watch', function () {
   gulp.watch('html/*.html', ['html']);
 });
 
+
+gulp.task('serve', ['watch'], function() {
+  browserSync.init({
+    server: './dist',
+    files: [
+      './dist/css/ita-bootstrap.css',
+      './dist/*.html'
+    ]
+  });
+
+  gulp.watch('./dist/css/*.css').on('change', browserSync.stream);
+  gulp.watch('./dist/*.html').on('change', browserSync.reload);
+
+});
+
 /* ============
  *
- *	Publish to
- *		https://italia-it.github.io/ita-bootstrap
+ *  Publish to
+ *    https://italia-it.github.io/ita-bootstrap
  */
 gulp.task('deploy', ['dist'], function () {
   return gulp.src(['./dist/**/*'])

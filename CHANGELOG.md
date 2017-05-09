@@ -1,3 +1,7 @@
+# 0.1.3
+
+- Aggiunto supporto a browserSync
+
 # 0.1.2
 
 - Impostato limite di 75 caratteri per elementi di un `<article>`
